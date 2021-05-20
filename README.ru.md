@@ -2,9 +2,9 @@
 
 Данный пример кода демонстрирует решение с помощью TrueConf Server API задач, которые были детально рассмотрены в статьях нашей базы знаний:
 
-1. Как добавить учётные записи пользователей из файла
+1. [Как добавить учётные записи пользователей из файла](https://trueconf.ru/blog/baza-znaniy/kak-dobavit-uchyotnye-zapisi-polzovatelej-iz-fajla.html)
 
-1. Как автоматически очищать завершившиеся конференции
+1. [Как автоматически очищать завершившиеся конференции](https://trueconf.ru/blog/baza-znaniy/kak-avtomaticheski-ochishhat-zavershivshiesya-konferenczii.html)
 
 *Читать описание на других языках: [English](README.md)*
 
