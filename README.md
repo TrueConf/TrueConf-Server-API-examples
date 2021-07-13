@@ -17,7 +17,7 @@ The code is written in Python, so you need to take the following steps to get st
 
 1. Update the **pip** package installer: https://pip.pypa.io/en/stable/installing/#upgrading-pip 
 
-1. nstall additional packages for Excel files:
+1. Install additional packages for Excel files:
 
 ```bash
 pip install requests pyexcel pyexcel-xls pyexcel-xlsx
