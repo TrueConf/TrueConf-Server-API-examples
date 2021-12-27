@@ -181,9 +181,9 @@ def get_data_manually():
 	API_PARAMS['server'] = check_https(input(">> "))
 
 	print(APP_STRINGS['enter_app_id'])
-	client_id = input(">> ")
+	API_PARAMS["client_id"] = input(">> ")
 	print(APP_STRINGS['enter_app_secret'])
-	client_secret = input(">> ")
+	API_PARAMS["client_secret"] = input(">> ")
 	return get_token()
 
 # Get the TrueConf server address, client ID and client secret for your OAuth app. 
@@ -275,17 +275,21 @@ def exec_request(url, request_type, body_encoding = "json", body_content = "", f
 		response.raise_for_status()
 	except HTTPError as http_err:
 		response_obj = response.json()
-		# custom message for dublicates
-		if response_obj['error']['errors'][0]['reason'] == 'uniqueValueAlreadyInUse':
-			print(APP_STRINGS['error_dublicate'])
-			return REQUEST_RESULT['error_dublicate'], {}
+		if type(response_obj['error']) == str:
+			print(F"{APP_STRINGS['error_http']}{http_err}")
+			print(F"{APP_STRINGS['error_api']}{response_obj['error']}")
+			return REQUEST_RESULT['other_error'], {}
 		# custom message for the "not found" API error
 		elif response_obj['error']['message'] == 'Not Found':
 			print(APP_STRINGS['error_not_found'])
 			return REQUEST_RESULT['error_not_found'], {}
+		# custom message for dublicates
+		elif response_obj['error']['errors'][0]['reason'] == 'uniqueValueAlreadyInUse':
+			print(APP_STRINGS['error_dublicate'])
+			return REQUEST_RESULT['error_dublicate'], {}
 		else:
 			print(F"{APP_STRINGS['error_http']}{http_err}")
-			print(F"{APP_STRINGS['error_api']}{response_obj['error']['errors'][0]['message']}")
+			# print(F"{APP_STRINGS['error_api']}{response_obj['error']['errors'][0]['message']}")
 			return REQUEST_RESULT['other_error'], {}
 	except Exception as err:
 		print(F"{APP_STRINGS['error']}{err}.")
