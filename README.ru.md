@@ -20,7 +20,7 @@
 1. Установить дополнительные пакеты для работы с Excel-файлами:
 
 ```bash
-pip install requests pyexcel pyexcel-xls pyexcel-xlsx
+pip install requests pyexcel pyexcel-odf pyexcel-xls pyexcel-xlsx
 ```
 
 ## Подготовка сервера
@@ -44,12 +44,31 @@ pip install requests pyexcel pyexcel-xls pyexcel-xlsx
 Вы можете указать параметры, необходимые для работы скрипта, в файле настроек **data.json** (рекомендуемый метод) или же ввести вручную после его запуска. Список необходимых параметров:
 
 - **`"server"`** – IP-адрес или URL TrueConf Server, например, **video.company.name** или **10.120.1.10**;
-- **`"new_users_file"`** – путь к файлу таблицы Excel, где хранятся данные для импорта учётных записей на сервер (детальное описание его формата смотрите [в статье о добавлении пользователей из файла](https://trueconf.ru/blog/baza-znaniy/kak-dobavit-uchyotnye-zapisi-polzovatelej-iz-fajla.html#_1));
+- **`"new_users_file"`** – к файлу, где хранятся данные для импорта учётных записей на сервер или их удаления (поддерживаются форматы **.csv**, **.ods**, **.xls** и **.xslx**, детальное описание его формата смотрите в статье о добавлении пользователей из файла);
 - **`"client_id"`** – идентификатор OAuth-приложения;
 - **`"client_secret"`** – секретный ключ OAuth-приложения;
-- **`"verify"`** – настройка проверки SSL-сертификата, необходимая при запуске кода на ОС Windows, подробнее: https://stackoverflow.com/questions/30405867/how-to-get-python-requests-to-trust-a-self-signed-ssl-certificate. В случае использования на сервере самоподписанного SSL-сертификата требуется указать путь к файлу сертификата, если же используется коммерческий сертификат, то указать значение **true** без кавычек: **`"verify":true`**.
+- **`"delimiter"`** – разделитель значений в строках при использовании **.csv**, требуется указать тот что используется в вашем файле;
+- **`"verify"`** – настройка проверки SSL-сертификата, подробнее: https://requests.readthedocs.io/en/latest/user/advanced/#ssl-cert-verification. В случае использования на сервере самоподписанного SSL-сертификата требуется скачать .crt-файл сертификата на ПК с данным скриптом, и в параметре `"verify"` указать полный путь к этому файлу. Если же используется коммерческий сертификат, то указать значение **true** без кавычек: **`"verify":true`**.
+
+Путь к файлу сертификата:
+- TrueConf Server для Linux: `/opt/trueconf/server/etc/webmanager/ssl/ca.crt`
+- TrueConf Server для Windows: `C:\Program Files\TrueConf Server\httpconf\ssl\ca.crt`
 
 ## Работа со скриптом
+
+**Запуск скрипта на Windows**
+
+Перейдите в каталог со скриптом и запустите его двойным кликом мыши. Альтернативный способ: открыть терминал и выполнить в нём команду `/path/api-examples.py` где `path` – полный путь к скрипту.
+
+**Запуск скрипта на Linux**
+
+Выполните в терминале команду:
+
+```bash
+sudo python3 /path/api-examples.py
+```
+
+где `path` – полный путь к скрипту.
 
 После запуска файла скрипта **api-examples.py** вы увидите меню в окне терминала, где вам будет предложено выбрать требуемую задачу. Для этого введите одну из таких команд:
 
@@ -61,13 +80,13 @@ pip install requests pyexcel pyexcel-xls pyexcel-xlsx
   - поиск среди них запланированных мероприятий со сроком окончания старше указанного;
   - удаление конференций.
 
-- **N** – [импорт пользователей и групп из Excel-файла](https://trueconf.ru/blog/baza-znaniy/kak-dobavit-uchyotnye-zapisi-polzovatelej-iz-fajla.html):
+- **N** – [импорт пользователей и групп из файла](https://trueconf.ru/blog/baza-znaniy/kak-dobavit-uchyotnye-zapisi-polzovatelej-iz-fajla.html):
   - чтение данных из файла;
   - добавление групп пользователей на сервер;
   - добавление учётных записей;
   - загрузка аватарок для пользователей (если указаны);
   - добавление пользователей в группы.
 
-- **D** – [удаление пользователей и групп, перечисленных в Excel-файле](https://trueconf.ru/blog/baza-znaniy/kak-dobavit-uchyotnye-zapisi-polzovatelej-iz-fajla.html#i-2);
+- **D** – [удаление пользователей и групп, перечисленных в файле](https://trueconf.ru/blog/baza-znaniy/kak-dobavit-uchyotnye-zapisi-polzovatelej-iz-fajla.html#i-2);
 
 - **Q** – завершение работы скрипта.

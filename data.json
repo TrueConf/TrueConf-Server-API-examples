@@ -3,5 +3,7 @@
 	"client_id":"a99c06f0cf562dedafa0cd94a92c895161ee8869",
 	"client_secret":"61e4945622ce65413e15641213fc032e72d2d3c4",
 	"new_users_file":"add-users.xlsx",
-	"verify":"C:/Program Files/TrueConf Server/httpconf/ssl/ca.crt"
+	"delimiter": ",",
+	"verify":"/mnt/media/git/api-examples/ca.crt"
 }
+

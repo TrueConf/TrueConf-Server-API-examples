@@ -13,7 +13,7 @@
 # Default value for the "verify" parameter in the data.json file is True
 # If you are using a self-signed certificate, you may need to set this value to path to your ca.crt file
 # For example: "verify":"C:/Program Files/TrueConf Server/httpconf/ssl/ca.crt"
-# more info: https://stackoverflow.com/questions/30405867/how-to-get-python-requests-to-trust-a-self-signed-ssl-certificate
+# more info: https://requests.readthedocs.io/en/latest/user/advanced/#ssl-cert-verification
 # =================================
 
 import requests
@@ -32,6 +32,7 @@ API_PARAMS = {
 		"client_secret":"",
 		"access_token":"",
 		"new_users_file":"",
+		"delimiter": ",",
 		"verify": True
 	}
 
@@ -151,7 +152,6 @@ def main_menu():
 	print("Q - quit")
 
 	selected_item = input(">> ").lower()
-	# print(F"=====\nselected={selected_item}")
 
 	exec_menu(selected_item)
 # ================
@@ -225,7 +225,9 @@ def read_new_users_groups():
 	groups = set()
 	if os.path.exists(API_PARAMS['new_users_file']):
 		try:
-			users = pyexcel.get_records(file_name=API_PARAMS['new_users_file'])
+			users = pyexcel.get_records(file_name=API_PARAMS['new_users_file'], delimiter=API_PARAMS['delimiter'])
+			users = [user for user in users if user['login_name']]
+
 			for user in users:
 				for key, value in user.items():
 					user[key] = str(value)
@@ -308,7 +310,7 @@ def get_access_token(client_id, client_secret):
 
 def get_conferences_list(conferences_count, **options):
 	conferences = []
-	url = F"{API_PARAMS['server']}/api/v3.3/conferences?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/conferences?access_token={API_PARAMS['access_token']}"
 	for option, value in options.items():
 		url += F"&{option}={value}"
 	result, json_data = exec_request(url, "GET")
@@ -325,7 +327,7 @@ def get_conferences_list(conferences_count, **options):
 	return conferences
 
 def delete_conference(id):
-	url = F"{API_PARAMS['server']}/api/v3.3/conferences/{id}?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/conferences/{id}?access_token={API_PARAMS['access_token']}"
 	result, json_data = exec_request(url, "DELETE")
 	return result == REQUEST_RESULT["success"]
 
@@ -381,7 +383,7 @@ def delete_old_conferences():
 	main_menu()
 
 def add_user(user):
-	url = F"{API_PARAMS['server']}/api/v3.3/users?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/users?access_token={API_PARAMS['access_token']}"
 
 	data = json.dumps(user)
 
@@ -391,12 +393,14 @@ def add_user(user):
 		result, json_data = edit_user(user)
 		if result == REQUEST_RESULT["success"]:
 			print(F"{user['login_name']} {APP_STRINGS['edited']}")
+		return False
 	elif result == REQUEST_RESULT["success"]:
 		print(F"{user['login_name']} {APP_STRINGS['added']}")
+		return True
 
 def add_avatar(user_id, file_path):
 	try:
-		url = F"{API_PARAMS['server']}/api/v3.3/users/{user_id}/avatar?access_token={API_PARAMS['access_token']}"
+		url = F"{API_PARAMS['server']}/api/v3.2/users/{user_id}/avatar?access_token={API_PARAMS['access_token']}"
 		file_name = file_path.split('/')[-1]
 		file_ext = file_path.split('.')[-1]
 		files=[('image',(file_name,open(file_path,'rb'),'image/' + file_ext))]
@@ -407,26 +411,26 @@ def add_avatar(user_id, file_path):
 		return False
 
 def edit_user(user):
-	url = F"{API_PARAMS['server']}/api/v3.3/users/{user['login_name']}?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/users/{user['login_name']}?access_token={API_PARAMS['access_token']}"
 
 	data = json.dumps(user)
 
 	return exec_request(url, "PUT", "json", data)
 
 def delete_user(user_id):
-	url = F"{API_PARAMS['server']}/api/v3.3/users/{user_id}?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/users/{user_id}?access_token={API_PARAMS['access_token']}"
 
 	result, json_data = exec_request(url, "DELETE")
 	return result == REQUEST_RESULT["success"]
 
 def delete_group(group_id):
-	url = F"{API_PARAMS['server']}/api/v3.3/groups/{group_id}?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/groups/{group_id}?access_token={API_PARAMS['access_token']}"
 
 	result, json_data = exec_request(url, "DELETE")
 	return result == REQUEST_RESULT["success"]
 
 def add_group(group):
-	url = F"{API_PARAMS['server']}/api/v3.3/groups?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/groups?access_token={API_PARAMS['access_token']}"
 
 	data = json.dumps(group)
 
@@ -446,7 +450,7 @@ def add_groups(groups):
 	print(F"=== {count} {APP_STRINGS['groups_added']} ===\n")
 
 def add_user_to_group(user_name, group_id):
-	url = F"{API_PARAMS['server']}/api/v3.3/groups/{group_id}/users?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/groups/{group_id}/users?access_token={API_PARAMS['access_token']}"
 
 	data = json.dumps({"user_id": user_name})
 
@@ -455,10 +459,9 @@ def add_user_to_group(user_name, group_id):
 
 def get_server_groups(**options):
 	groups = []
-	url = F"{API_PARAMS['server']}/api/v3.3/groups?access_token={API_PARAMS['access_token']}"
+	url = F"{API_PARAMS['server']}/api/v3.2/groups?access_token={API_PARAMS['access_token']}"
 	for option, value in options.items():
 		url += F"&{option}={value}"
-	# print(F"url = {url}")
 	result, json_data = exec_request(url, "GET")
 	if result == REQUEST_RESULT["success"]:
 		# check the next page id and continue for the next page if needed (next_page_id > 0)
@@ -478,9 +481,8 @@ def add_user_to_groups(user, groups, groups_list):
 	# if user is admin add to all groups from the list
 	if not('is_admin' in user and user['is_admin']):
 		groups = user[GROUPS_COLUMN].split(',')
-	# print(groups)
+
 	for group_name in groups:
-		# print(group)
 
 		# get group id by name
 		if group_name:
@@ -491,7 +493,6 @@ def add_user_to_groups(user, groups, groups_list):
 					if add_user_to_group(user['login_name'], group_id):
 						added_groups = added_groups + group_name + ', '
 					break
-	# print("added_groups: '" + added_groups + "'")
 	return added_groups[:-2]
 
 def add_users():
@@ -550,7 +551,6 @@ def delete_groups(groups):
 
 	count = 0
 	for group_name in groups:
-		# print(group)
 
 		# get group id by name
 		if group_name:
