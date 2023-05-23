@@ -20,7 +20,7 @@ The code is written in Python, so you need to take the following steps to get st
 1. Install additional packages for Excel files:
 
 ```bash
-pip install requests pyexcel pyexcel-odf pyexcel-xls pyexcel-xlsx
+pip install requests pyexcel==0.6.7 pyexcel-xls pyexcel-xlsx==0.6.0 openpyxl==3.0.10
 ```
 
 ## Getting ready
