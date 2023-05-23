@@ -7,7 +7,7 @@
 # 1. Install Python 3.7+: https://www.python.org/downloads/
 # 2. Upgrade pip (if needed): https://pip.pypa.io/en/stable/installing/
 # 3. Install required packeges via pip:
-#    >> pip install requests pyexcel pyexcel-xls pyexcel-xlsx
+#    >> pip install requests pyexcel==0.6.7 pyexcel-xls pyexcel-xlsx==0.6.0 openpyxl==3.0.10
 # 
 # WARNING!
 # Default value for the "verify" parameter in the data.json file is True
