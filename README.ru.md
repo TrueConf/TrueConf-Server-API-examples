@@ -20,7 +20,7 @@
 1. Установить дополнительные пакеты для работы с Excel-файлами:
 
 ```bash
-pip install requests pyexcel pyexcel-odf pyexcel-xls pyexcel-xlsx
+pip install requests pyexcel==0.6.7 pyexcel-xls pyexcel-xlsx==0.6.0 openpyxl==3.0.10
 ```
 
 ## Подготовка сервера
